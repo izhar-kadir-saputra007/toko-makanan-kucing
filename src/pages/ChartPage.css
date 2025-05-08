@@ -1,0 +1,34 @@
+
+/* Animasi dan style tambahan */
+.custom-tabs .nav-link {
+    transition: all 0.3s ease;
+    border: none;
+    color: #6c757d;
+    font-weight: 500;
+  }
+  
+  .custom-tabs .nav-link.active {
+    color: #0d6efd;
+    background-color: transparent;
+    border-bottom: 3px solid #0d6efd;
+  }
+  
+  .custom-tabs .nav-link:hover:not(.active) {
+    color: #0d6efd;
+    background-color: rgba(13, 110, 253, 0.1);
+  }
+  
+  .animate__animated {
+    animation-duration: 0.5s;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .d-flex.flex-wrap {
+      flex-direction: column;
+    }
+    
+    .main {
+      padding: 15px !important;
+    }
+  }
