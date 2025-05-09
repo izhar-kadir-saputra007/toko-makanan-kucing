@@ -141,7 +141,7 @@ const handleBarangChange = (e) => {
   setFormData(prev => ({
     ...prev,
     name: selectedBarangName,
-    purchase_price: selectedBarang ? selectedBarang.harga_jual : "" // Ambil harga_jual bukan unit_price
+    purchase_price: selectedBarang ? selectedBarang.unit_price : "" // Ambil harga_jual bukan unit_price
   }));
 };
 
@@ -170,7 +170,7 @@ const handleBarangChange = (e) => {
         supplier_name: barangMasukItem.supplier_name,
         name: barangMasukItem.name,
         quantity: barangMasukItem.quantity,
-        purchase_price: barangInfo?.harga_jual || barangMasukItem.purchase_price, // Prioritaskan harga_jual
+        purchase_price: barangInfo?.unit_price || barangMasukItem.purchase_price, // Prioritaskan harga_jual
         received_date: barangMasukItem.received_date,
       });
   
