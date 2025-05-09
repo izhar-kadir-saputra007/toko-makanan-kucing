@@ -342,7 +342,7 @@ const DataEOQ = () => {
                 >
                   <FiEdit2 />
                 </Button>
-                <Button
+                {/* <Button
                   variant="outline-info"
                   size="sm"
                   onClick={() => {
@@ -351,7 +351,7 @@ const DataEOQ = () => {
                   }}
                 >
                   <FiEye />
-                </Button>
+                </Button> */}
               </td>
             </tr>
           ))}

@@ -167,14 +167,14 @@ const fetchEOQData = async (id) => {
                   <td><strong>Biaya Simpan (H)</strong></td>
                   <td>{formatRupiah(eoqData.biayaSimpan)}</td>
                 </tr>
-                <tr>
+                {/* <tr>
                   <td><strong>Pembelian Rata-Rata (Q*)</strong></td>
                   <td>{eoqData.pembelianRataRata}</td>
-                </tr>
-                <tr>
+                </tr> */}
+                {/* <tr>
                   <td><strong>Total Biaya Persediaan (TIC)</strong></td>
                   <td>{formatRupiah(eoqData.totalBiayaPersediaan)}</td>
-                </tr>
+                </tr> */}
                 <tr>
                   <td><strong>Metode EOQ</strong></td>
                   <td>{eoqData.metodeEoq}</td>

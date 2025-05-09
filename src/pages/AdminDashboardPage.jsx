@@ -459,9 +459,9 @@ const handleBarangChange = (e) => {
                       <th className="">Supplier</th>
                       <th className="">Nama Barang</th>
                       <th className="">Harga</th>
-                      <th className="">Kuantiti/sak</th>
+                      <th className="">Kuantiti</th>
                       <th className="">Tanggal Masuk</th>
-                      <th className="">Dibuat</th>
+                    
                       <th className="">Aksi</th>
                     </tr>
                   </thead>
@@ -499,7 +499,7 @@ const handleBarangChange = (e) => {
                             </td>
                             <td>{item.quantity} sak</td>
                             <td>{formatDate(dateToDisplay)}</td>
-                            <td>{formatDate(item.createdAt)}</td>
+                        
                             <td className="d-flex flex-row gap-2 text-center">
                               <div
                                 onClick={() => handleDeleteBarangMasuk(item.id)}

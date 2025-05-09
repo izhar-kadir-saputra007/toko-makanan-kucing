@@ -378,7 +378,7 @@ function BarangKeluarPage() {
                       <th>#</th>
                       <th>Penginput</th>
                       <th>Nama Barang</th>
-                      <th>Kuantiti/sak</th>
+                      <th>Kuantiti</th>
                       <th>Harga Jual</th>
                       <th>Tanggal Keluar</th>
                       <th>Aksi</th>
