@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import { Table, Button, Spinner, Alert, Modal, Form } from 'react-bootstrap';
+import { Table, Button, Spinner, Alert, Modal, Form, Tab, Tabs } from 'react-bootstrap';
+import { FiBox, FiDollarSign, FiTruck, FiUsers, FiHome, FiZap, FiClock, FiCalendar, FiAlertTriangle, FiPercent, FiDivideSquare, FiEdit2, FiEye } from 'react-icons/fi';
 import AdminLayout from '../components/AdminLayout';
 import  ModalsEOQ from '../components/ModalsEOQ';
+import { motion } from 'framer-motion';
 
 const DataEOQ = () => {
   const [dataEoq, setDataEoq] = useState([]);
@@ -13,6 +15,7 @@ const DataEOQ = () => {
   const [error, setError] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [barangOptions, setBarangOptions] = useState([]); 
+  const [activeTab, setActiveTab] = useState('dataUtama');
   const [formData, setFormData] = useState({
     name: "",
     barang_id: "",
@@ -287,6 +290,143 @@ const DataEOQ = () => {
     fetchDataEoq();
   }, []);
 
+  const fadeIn = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { duration: 0.5 } }
+  };
+
+  // Komponen Tab Data Utama
+  const DataUtamaTab = () => (
+    <motion.div
+      initial="hidden"
+      animate="visible"
+      variants={fadeIn}
+    >
+      <Table striped bordered hover responsive className="mt-3">
+        <thead className="bg-primary text-white">
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col"><FiBox className="mr-2" /> Nama Barang</th>
+            <th scope="col"><FiTruck className="mr-2" /> Demand Keluar</th>
+            <th scope="col"><FiTruck className="mr-2" /> Demand Masuk</th>
+            <th scope="col"><FiDivideSquare className="mr-2" /> EOQ</th>
+            <th scope="col">Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          {dataEoq.map((item, index) => (
+            <tr key={item.id}>
+              <td>{index + 1}</td>
+              <td>{item.Barang?.name}</td>
+              <td>{item.demanbarangKeluar}</td>
+              <td>{item.demanbarangMasuk}</td>
+              <td>
+                <Button
+                  variant="info"
+                  size="sm"
+                  className="me-2"
+                  onClick={() => handleEOQModalOpen(item.id)}
+                >
+                  <FiEye className="mr-1" /> Lihat EOQ
+                </Button>
+              </td>
+              <td className="text-center">
+                <Button
+                  variant="outline-primary"
+                  size="sm"
+                  onClick={() => {
+                    handleModalOpen(item);
+                    setActiveTab('detailData');
+                  }}
+                  className="mr-2"
+                >
+                  <FiEdit2 />
+                </Button>
+                <Button
+                  variant="outline-info"
+                  size="sm"
+                  onClick={() => {
+                    handleEOQModalOpen(item.id);
+                    setActiveTab('detailData');
+                  }}
+                >
+                  <FiEye />
+                </Button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+    </motion.div>
+  );
+
+  // Komponen Tab Detail Data
+  const DetailDataTab = () => (
+    <motion.div
+      initial="hidden"
+      animate="visible"
+      variants={fadeIn}
+      key="detail"
+    >
+      <Table striped bordered hover responsive className="mt-3">
+        <thead className="bg-primary text-white">
+          <tr>
+            <th scope="col"><FiDollarSign className="mr-2" /> Cost CC Hijau</th>
+            <th scope="col"><FiDollarSign className="mr-2" /> Cost CC Pink</th>
+            <th scope="col"><FiTruck className="mr-2" /> Ongkos Kirim</th>
+            <th scope="col"><FiUsers className="mr-2" /> Cost Karyawan</th>
+            <th scope="col"><FiHome className="mr-2" /> Cost Gudang</th>
+            <th scope="col"><FiZap className="mr-2" /> Cost Listrik</th>
+            <th scope="col"><FiCalendar className="mr-2" /> Frekuensi Pemesanan</th>
+            <th scope="col"><FiClock className="mr-2" /> Lead Time</th>
+            <th scope="col"><FiCalendar className="mr-2" /> Hari Kerja</th>
+            <th scope="col"><FiAlertTriangle className="mr-2" /> Biaya Kehabisan</th>
+            <th scope="col"><FiPercent className="mr-2" /> Standar Deviasi</th>
+          </tr>
+        </thead>
+        <tbody>
+          {dataEoq.map((item) => (
+            <tr key={item.id}>
+              <td>{new Intl.NumberFormat("id-ID", {
+                style: "currency",
+                currency: "IDR",
+              }).format(item.costCCHijau)}</td>
+              <td>{new Intl.NumberFormat("id-ID", {
+                style: "currency",
+                currency: "IDR",
+              }).format(item.costCCPink)}</td>
+              <td>{new Intl.NumberFormat("id-ID", {
+                style: "currency",
+                currency: "IDR",
+              }).format(item.ongkosKirim)}</td>
+              <td>{new Intl.NumberFormat("id-ID", {
+                style: "currency",
+                currency: "IDR",
+              }).format(item.costKaryawan)}</td>
+              <td>{new Intl.NumberFormat("id-ID", {
+                style: "currency",
+                currency: "IDR",
+              }).format(item.costGudang)}</td>
+              <td>{new Intl.NumberFormat("id-ID", {
+                style: "currency",
+                currency: "IDR",
+              }).format(item.costListrik)}</td>
+              <td>{item.frekuensiPemesanan}</td>
+              <td>{item.LeadTime}</td>
+              <td>{item.hariKerja}</td>
+              <td>{new Intl.NumberFormat("id-ID", {
+                style: "currency",
+                currency: "IDR",
+              }).format(item.biayaKehabisan)}</td>
+              <td>{item.StanderDeviasi}</td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+    </motion.div>
+  );
+
+  // Render utama dengan tab
   return (
     <AdminLayout>
       <div className="d-flex align-items-center justify-content-center"
@@ -316,92 +456,36 @@ const DataEOQ = () => {
               ) : error ? (
                 <Alert variant="danger">{error}</Alert>
               ) : (
-                <Table striped bordered hover responsive>
-                  <thead>
-                    <tr>
-                      <th scope="col">#</th>
-                      <th scope="col">Nama barang</th>
-                      <th scope="col">Deman Barang Keluar</th>
-                      <th scope="col">Deman Barang Masuk</th>
-                      <th scope="col">Cost CC Hijau</th>
-                      <th scope="col">Cost CC Pink</th>
-                      <th scope="col">Ongkos Kirim</th>
-                      <th scope="col">Cost Karyawan</th>
-                      <th scope="col">Cost Gudang</th>
-                      <th scope="col">Cost Listrik</th>
-                      <th scope="col">Frekuensi Pemesanan</th>
-                      <th scope="col">Lead Time</th>
-                      <th scope="col">Hari Kerja</th>
-                      <th scope="col">Biaya Kehabisan</th>
-                      <th scope="col">Standar Deviasi</th>
-                      <th scope="col">EOQ</th>
-                      <th scope="col">Aksi</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {dataEoq.map((item, index) => (
-                      <tr key={item.id}>
-                        <td>{index + 1}</td>
-                        <td>{item.Barang?.name}</td>
-                        <td>{item.demanbarangKeluar}</td>
-                        <td>{item.demanbarangMasuk}</td>
-                        <td>{new Intl.NumberFormat("id-ID", {
-                              style: "currency",
-                              currency: "IDR",
-                            }).format(item.costCCHijau)}</td>
-                        <td>{new Intl.NumberFormat("id-ID", {
-                              style: "currency",
-                              currency: "IDR",
-                            }).format(item.costCCPink)}</td>
-                        <td>{new Intl.NumberFormat("id-ID", {
-                              style: "currency",
-                              currency: "IDR",
-                            }).format(item.ongkosKirim)}</td>
-                        <td>{new Intl.NumberFormat("id-ID", {
-                              style: "currency",
-                              currency: "IDR",
-                            }).format(item.costKaryawan)}</td>
-                        <td>{new Intl.NumberFormat("id-ID", {
-                              style: "currency",
-                              currency: "IDR",
-                            }).format(item.costGudang)}</td>
-                        <td>{new Intl.NumberFormat("id-ID", {
-                              style: "currency",
-                              currency: "IDR",
-                            }).format(item.costListrik)}{}</td>
-                        <td>{item.frekuensiPemesanan}</td>
-                        <td>{item.LeadTime}</td>
-                        <td>{item.hariKerja}</td>
-                        <td>{new Intl.NumberFormat("id-ID", {
-                              style: "currency",
-                              currency: "IDR",
-                            }).format(item.biayaKehabisan)}</td>
-                        <td>{item.StanderDeviasi}</td>
-                        <td>
-                          <Button
-                            variant="info"
-                            size="sm"
-                            className="me-2"
-                            onClick={() => handleEOQModalOpen(item.id)}
-                            aria-label={`Lihat EOQ ${item.Barang?.name}`}
-                          >
-                            EOQ
-                          </Button>
-                        </td>
-                        <td className="text-center">
-                          <button
-                            className="btn btn-link"
-                            onClick={() => handleModalOpen(item)}
-                            aria-label={`Edit ${item.Barang?.name}`}
-                          >
-                            <i className=" aksi ri-edit-fill"
-                             style={{ fontSize: "25px" }}></i>
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </Table>
+                <>
+                  <Tabs
+                    activeKey={activeTab}
+                    onSelect={(k) => setActiveTab(k)}
+                    className="mb-3"
+                  >
+                    <Tab
+                      eventKey="dataUtama"
+                      title={
+                        <span>
+                          <FiBox className="mr-4" />
+                           Data Utama
+                        </span>
+                      }
+                    >
+                      <DataUtamaTab />
+                    </Tab>
+                    <Tab
+                      eventKey="detailData"
+                      title={
+                        <span>
+                          <FiDollarSign className="mr-4" />
+                           Detail Biaya
+                        </span>
+                      }
+                    >
+                      <DetailDataTab />
+                    </Tab>
+                  </Tabs>
+                </>
               )}
             </div>
           </div>

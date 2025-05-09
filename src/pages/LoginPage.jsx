@@ -40,7 +40,7 @@ function LoginPage() {
         confirmButtonText: "Ok",
       }).then(() => {
         // Redirect ke halaman dashboard setelah login sukses
-        navigate("/admindashboard");
+        navigate("/chart");
       });
 
       // Simpan access token di localStorage

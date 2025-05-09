@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom"; 
 import { toast } from "sonner"; // Mengubah import toast dari sonner langsung
 import { 
   FaCat, 
@@ -15,7 +16,7 @@ import {
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
-  
+   const navigate = useNavigate(); 
   useEffect(() => {
     // Menampilkan toast selamat datang saat halaman dimuat
     toast("Welcome to MeowMeals! 😺", {
@@ -90,6 +91,16 @@ function App() {
               ))}
               <li className="nav-item">
                 <button className="btn btn-primary ms-2">Shop Now</button>
+                {/* tombol ini akan menuju login */}
+
+               <button 
+                  className="btn btn-outline-primary ms-2"
+                  onClick={() => navigate("/login")}
+                >
+                  Login
+                </button>
+
+
               </li>
             </ul>
           </div>
