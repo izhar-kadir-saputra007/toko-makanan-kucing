@@ -10,6 +10,9 @@ const DataBarangPage = () => {
   const [loading, setLoading] = useState(false); // State untuk loading
   const [isEdit, setIsEdit] = useState(false); // State untuk membedakan tambah/edit barang
   const [eoqData, setEoqData] = useState([]);
+  const [suppliers, setSuppliers] = useState([]); // State untuk menyimpan data supplier
+  const [selectedFile, setSelectedFile] = useState(null); // State untuk file gambar
+  const [previewImage, setPreviewImage] = useState(null); // State untuk preview gambar
 
   // Fungsi untuk mengambil data dari localStorage
   const getEoqDataFromLocalStorage = () => {
@@ -38,13 +41,66 @@ const DataBarangPage = () => {
   const handleModalOpen = (barang = null) => {
     setSelectedBarang(barang || {}); // Jika barang null, inisialisasi objek kosong
     setIsEdit(!!barang); // Tentukan apakah ini edit atau tambah barang
+    setSelectedFile(null); // Reset file yang dipilih
+    
+    // Set preview image jika edit dan ada gambar
+    if (barang && barang.gambar) {
+      setPreviewImage(`http://localhost:4000${barang.gambar}`);
+    } else {
+      setPreviewImage(null);
+    }
+    
     setShowModal(true); // Buka modal
   };
 
   // Fungsi untuk menutup semua modal
   const handleModalClose = () => {
     setSelectedBarang(null); // Reset barang yang dipilih
+    setSelectedFile(null); // Reset file yang dipilih
+    setPreviewImage(null); // Reset preview image
     setShowModal(false); // Tutup modal
+  };
+
+  // Fungsi untuk handle perubahan file
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Validasi ukuran file (maksimal 2MB)
+      if (file.size > 2 * 1024 * 1024) {
+        Swal.fire({
+          icon: "error",
+          title: "File terlalu besar!",
+          text: "Ukuran gambar maksimal 2MB",
+          showConfirmButton: false,
+          timer: 2000,
+        });
+        e.target.value = '';
+        return;
+      }
+
+      // Validasi tipe file
+      const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+      if (!allowedTypes.includes(file.type)) {
+        Swal.fire({
+          icon: "error",
+          title: "Format file tidak valid!",
+          text: "Hanya file JPEG, PNG, dan JPG yang diperbolehkan",
+          showConfirmButton: false,
+          timer: 2000,
+        });
+        e.target.value = '';
+        return;
+      }
+
+      setSelectedFile(file);
+      
+      // Buat preview image
+      const reader = new FileReader();
+      reader.onload = () => {
+        setPreviewImage(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   // Fetch data barang dari server
@@ -63,10 +119,30 @@ const DataBarangPage = () => {
       });
 
       setBarangs(response.data.data);
+      console.log("Barang fetched successfully:", response.data.data);
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchSuppliers = async () => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      if (!token) {
+        console.error("Token tidak ditemukan");
+        return;
+      }
+
+      const response = await axios.get("http://localhost:4000/api/getSuppliers", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      setSuppliers(response.data.data);
+      console.log("Suppliers fetched successfully:", response.data.data);
+    } catch (error) {
+      console.error("Error fetching suppliers:", error);
     }
   };
 
@@ -81,6 +157,21 @@ const DataBarangPage = () => {
         return;
       }
 
+      // Buat FormData untuk mengirim file
+      const formData = new FormData();
+      
+      // Tambahkan data barang ke FormData
+      Object.keys(selectedBarang).forEach(key => {
+        if (selectedBarang[key] !== null && selectedBarang[key] !== undefined) {
+          formData.append(key, selectedBarang[key]);
+        }
+      });
+
+      // Tambahkan file gambar jika ada
+      if (selectedFile) {
+        formData.append('gambar', selectedFile);
+      }
+
       const url = isEdit
         ? `http://localhost:4000/api/updateBarang/${selectedBarang.id}`
         : `http://localhost:4000/api/addBarang`;
@@ -90,8 +181,11 @@ const DataBarangPage = () => {
       const response = await axios({
         method,
         url,
-        data: selectedBarang,
-        headers: { Authorization: `Bearer ${token}` },
+        data: formData,
+        headers: { 
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data'
+        },
       });
 
       // Tampilkan SweetAlert sukses
@@ -107,6 +201,7 @@ const DataBarangPage = () => {
 
       fetchDataBarang(); // Refresh data barang
       handleModalClose(); // Tutup modal
+      console.log("Barang berhasil disimpan:", response.data);
     } catch (error) {
       console.error("Error submitting barang:", error);
 
@@ -114,9 +209,9 @@ const DataBarangPage = () => {
       Swal.fire({
         icon: "error",
         title: "Terjadi kesalahan!",
-        text: "Gagal menyimpan data barang. Silakan coba lagi.",
+        text: error.response?.data?.message || "Gagal menyimpan data barang. Silakan coba lagi.",
         showConfirmButton: false,
-        timer: 1500,
+        timer: 2000,
       });
     }
   };
@@ -176,6 +271,7 @@ const DataBarangPage = () => {
 
   useEffect(() => {
     fetchDataBarang();
+    fetchSuppliers();
     getEoqDataFromLocalStorage();
   }, []);
 
@@ -214,13 +310,14 @@ const DataBarangPage = () => {
                   <thead>
                     <tr>
                       <th>#</th>
+                      <th>Gambar</th>
                       <th>Nama Barang</th>
-                      <th>Harga Beli/Unit</th>
-                      <th>Harga jual/Unit</th>
-                      <th>Stock Akhir</th>
+                      <th>Supplier</th>
+                      {/* <th>Harga Beli/Unit</th>
+                      <th>Harga jual/Unit</th> */}
+                      {/* <th>Stock Akhir</th> */}
                       <th>ROP</th>
                       <th>Safety Stock</th>
-                      <th>Tanggal Update</th>
                       <th>Aksi</th>
                     </tr>
                   </thead>
@@ -238,8 +335,41 @@ const DataBarangPage = () => {
                       return (
                         <tr key={barang.id}>
                           <td>{index + 1}</td>
-                          <td>{barang.name}</td>
                           <td>
+                            {barang.gambar ? (
+                              <img 
+                                src={`http://localhost:4000${barang.gambar}`} 
+                                alt={barang.name}
+                                style={{ 
+                                  width: '50px', 
+                                  height: '50px', 
+                                  objectFit: 'cover',
+                                  borderRadius: '5px'
+                                }}
+                                onError={(e) => {
+                                  e.target.src = 'https://via.placeholder.com/50x50?text=No+Image';
+                                }}
+                              />
+                            ) : (
+                              <div 
+                                style={{ 
+                                  width: '50px', 
+                                  height: '50px', 
+                                  backgroundColor: '#f8f9fa',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  borderRadius: '5px',
+                                  border: '1px solid #dee2e6'
+                                }}
+                              >
+                                <i className="ri-image-line" style={{ color: '#6c757d' }}></i>
+                              </div>
+                            )}
+                          </td>
+                          <td>{barang.name}</td>
+                          <td>{barang.Supplier?.name || '-'}</td>
+                          {/* <td>
                             {new Intl.NumberFormat("id-ID", {
                               style: "currency",
                               currency: "IDR",
@@ -250,11 +380,10 @@ const DataBarangPage = () => {
                               style: "currency",
                               currency: "IDR",
                             }).format(barang.harga_jual)}
-                          </td>
-                          <td>{barang.total_quantity} sak</td>
+                          </td> */}
+                          {/* <td>{barang.total_quantity} sak</td> */}
                           <td>{eoqInfo.rop}</td>
                           <td>{eoqInfo.safetyStock}</td>
-                          <td>{formattedDate}</td>
                           <td className="d-flex">
                             <div>
                               <i 
@@ -286,11 +415,43 @@ const DataBarangPage = () => {
       <Modal className="custom-modal p-5" show={showModal} onHide={handleModalClose}>
         <Modal.Header closeButton>
           <Modal.Title>
-            {isEdit ? "Edit Barang" : "Tambah Barang Baru"}
+            {isEdit ? "Ubah Barang" : "Tambah Barang Baru"}
           </Modal.Title>
         </Modal.Header>
-        <Modal.Body  className="custom-modal-body p-5 text-2xl">
+        <Modal.Body className="custom-modal-body p-5 text-2xl">
           <Form onSubmit={handleSubmitBarang}>
+            
+            {/* Input Gambar */}
+            <Form.Group className="mb-3">
+              <Form.Label>Gambar Barang</Form.Label>
+              <Form.Control
+                type="file"
+                accept="image/jpeg,image/png,image/jpg"
+                onChange={handleFileChange}
+              />
+              <Form.Text className="text-muted">
+                Format yang diperbolehkan: JPEG, PNG, JPG. Maksimal 2MB.
+              </Form.Text>
+              
+              {/* Preview Gambar */}
+              {previewImage && (
+                <div className="mt-3">
+                  <p className="mb-2">Preview:</p>
+                  <img 
+                    src={previewImage} 
+                    alt="Preview" 
+                    style={{ 
+                      width: '150px', 
+                      height: '150px', 
+                      objectFit: 'cover',
+                      borderRadius: '8px',
+                      border: '1px solid #dee2e6'
+                    }} 
+                  />
+                </div>
+              )}
+            </Form.Group>
+
             <Form.Group className="mb-3">
               <Form.Label>Nama Barang</Form.Label>
               <Form.Control
@@ -303,6 +464,22 @@ const DataBarangPage = () => {
             </Form.Group>
 
             <Form.Group className="mb-3">
+              <Form.Label>Supplier</Form.Label>
+              <Form.Select
+                name="supplier_id"
+                value={selectedBarang?.supplier_id || ""}
+                onChange={handleInputChange}
+              >
+                <option value="">Pilih Supplier</option>
+                {suppliers.map((supplier) => (
+                  <option key={supplier.id} value={supplier.id}>
+                    {supplier.name}
+                  </option>
+                ))}
+              </Form.Select>
+            </Form.Group>
+
+            <Form.Group className="mb-3">
               <Form.Label>Harga Beli</Form.Label>
               <Form.Control
                 type="number"
@@ -312,6 +489,7 @@ const DataBarangPage = () => {
                 required
               />
             </Form.Group>
+            
             <Form.Group className="mb-3">
               <Form.Label>Harga Jual</Form.Label>
               <Form.Control
@@ -322,6 +500,7 @@ const DataBarangPage = () => {
                 required
               />
             </Form.Group>
+            
             <Form.Group className="mb-3">
               <Form.Label>Jumlah Barang</Form.Label>
               <Form.Control
@@ -332,13 +511,14 @@ const DataBarangPage = () => {
                 required
               />
             </Form.Group>
+            
             <Button className="btn btn-primary-color mt-3" variant="primary" type="submit">
               Simpan
             </Button>
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button  variant="danger" onClick={handleModalClose}>
+          <Button variant="danger" onClick={handleModalClose}>
             Batal
           </Button>
         </Modal.Footer>

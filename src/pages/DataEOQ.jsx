@@ -307,8 +307,8 @@ const DataEOQ = () => {
           <tr>
             <th scope="col">#</th>
             <th scope="col"><FiBox className="mr-2" /> Nama Barang</th>
-            <th scope="col"><FiTruck className="mr-2" /> Demand Keluar</th>
-            <th scope="col"><FiTruck className="mr-2" /> Demand Masuk</th>
+            <th scope="col"><FiTruck className="mr-2" /> Total Barang Keluar</th>
+            <th scope="col"><FiTruck className="mr-2" />Total Barang Masuk</th>
             <th scope="col"><FiDivideSquare className="mr-2" /> EOQ</th>
             <th scope="col">Aksi</th>
           </tr>
