@@ -1,0 +1,113 @@
+* {
+  font-family: "Poppins", sans-serif;
+}
+
+:root {
+  --primary-color: #111641;
+  --secondary-color: #7400b8;
+  --success-color: #38b735;
+  --white-color: #ffffff;
+  --grey-color: #f0f0f0;
+  --modals-color: #eff0f6;
+  --delete-color: #ff0000;
+}
+
+.th {
+  color: var(--primary-color);
+}
+
+.btn-primary-color {
+  background-color: var(--primary-color);
+  color: var(--white-color);
+  border: 2px solid var(--primary-color);
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease,
+    border-color 0.3s ease;
+}
+
+.btn-primary-color:hover {
+  background-color: var(--white-color);
+  color: var(--primary-color);
+  border: 2px solid var(--primary-color);
+}
+
+.btn-primary-color-icon {
+  background-color: var(--white-color);
+  color: var(--primary-color);
+  border: 2px solid var(--primary-color);
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease,
+    border-color 0.3s ease;
+}
+
+.btn-primary-color-icon:hover {
+  background-color: var(--primary-color);
+  color: var(--white-color);
+  border: 2px solid var(--primary-color);
+}
+
+.aksi {
+  color: var(--success-color);
+  font-size: 20px;
+}
+.aksi:hover {
+  color: var(--primary-color);
+  cursor: pointer;
+}
+.aksi-delete {
+  color: var(--delete-color);
+  font-size: 20px;
+}
+.aksi-delete:hover {
+  color: var(--primary-color);
+  cursor: pointer;
+}
+.body {
+  background-color: var(--grey-color);
+}
+
+.sidebar {
+  background-color: var(--primary-color);
+  transition: width 0.3s ease-in-out;
+}
+
+.sidebar-shadow {
+  box-shadow: 10px 0 10px rgba(0, 0, 0, 0.3); /* Bayangan lebih besar dan lebih gelap */
+}
+
+.custom-modal .modal-content {
+  background-color: var(--modals-color);
+  color: var(--primary-color); /* Ubah warna teks */
+  border-radius: 10px; /* Membuat sudut modal membulat */
+  border: 2px solid var(--grey-color); /* Tambahkan border biru */
+  box-shadow: 15px 25px 35px rgba(0, 0, 0, 0.2); /* Bayangan */
+}
+
+.custom-modal .modal-header {
+  border-bottom: 2px solid var(--primary-color); /* Menghilangkan garis bawah */
+}
+
+.sidebar .nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.1); /* Hover efek */
+  border-radius: 4px;
+}
+
+.sidebar .nav-link.active-link {
+  background-color: #007bff; /* Warna saat aktif */
+  color: white;
+  border-radius: 4px;
+}
+
+/* CSS untuk memastikan lebar modal sesuai dengan tabel */
+.eoq-modal .modal-dialog {
+  max-width: 90%; /* Atur sesuai kebutuhan */
+  width: auto;
+}
+
+.eoq-modal .modal-content {
+  width: 100%;
+}

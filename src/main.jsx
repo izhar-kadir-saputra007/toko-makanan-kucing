@@ -6,7 +6,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import 'remixicon/fonts/remixicon.css'
 
 import 'bootstrap/dist/css/bootstrap.min.css';
-import  "./dist/css/main.css"
+import  "./styles/main.css"
 
 import App from './App'
 import RegisterPage from './pages/registerPage';
