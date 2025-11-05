@@ -15,7 +15,7 @@ import AdminDashboardPage from './pages/AdminDashboardPage';
 import BarangKeluarPage from './pages/BarangKeluarPage'
 import SuplayerPage from './pages/SuplayerPage'
 import DataBarangPage from './pages/DataBarangPage'
-import ChartPage from './pages/chartPage'
+import ChartPage from './pages/ChartPage'
 import Testing from './pages/Testing'
 import DataEOQ from './pages/DataEOQ'
 import EditUserPage from './pages/EdituserPage'
